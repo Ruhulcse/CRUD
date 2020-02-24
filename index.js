@@ -47,11 +47,40 @@ const init = async () => {
             return data;
         }
     });
-
+    // Show specific data for specefic id
+    server.route({
+        method: 'GET',
+        path: '/user/{id}',
+        config: {
+            cors: {
+                origin: ['*'],
+                additionalHeaders: ['X-Data-Offset', 'X-Data-Limit']
+            }
+        },
+        handler: async (request, h) => {
+            console.log(request.params);
+            let id=request.params.id;
+            let data = [];
+            try{
+                data = await h.context.knex.select("*").from("student").where("id", id);
+                console.log(data);
+            }catch(error){
+                console.log(error);
+                throw error;
+            }
+            return data;
+        }
+    });
     //Insert Data using POST Request
     server.route({
         method: 'POST',
         path: '/user',
+        config: {
+            cors: {
+                origin: ['*'],
+                additionalHeaders: ['X-Data-Offset', 'X-Data-Limit']
+            }
+        },
         handler: async (request, h) => {
             let input = "";
             try{
@@ -68,9 +97,17 @@ const init = async () => {
     server.route({
         method: 'PUT',
         path:'/user/{id}',
+        config: {
+            cors: {
+                origin: ['*'],
+                additionalHeaders: ['X-Data-Offset', 'X-Data-Limit']
+            }
+        },
         handler: async (request, h) => {
             let id=request.params.id;
+            console.log(id);
             let data=request.payload;
+            console.log(data);
             console.log(data);
             let update="";
             try{
@@ -87,8 +124,15 @@ const init = async () => {
     server.route({
         method: 'DELETE',
         path:'/user/{id}',
+        config: {
+            cors: {
+                origin: ['*'],
+                additionalHeaders: ['X-Data-Offset', 'X-Data-Limit']
+            }
+        },
         handler: async (request, h) => {
             let id=request.params.id;
+            console.log(`Requested ${id}`);
             let result;
             try{
                result = await h.context.knex('student').where('id',id).del().returning("id");
